@@ -5,7 +5,7 @@
 * Plugin Name: WP Alexa Flash Briefing
 * Plugin URI: https://github.com/andrewfitz/wp-alexa-flash-briefing
 * Description: Creates briefing post types and JSON feed endpoint for Alexa flash briefing skill
-* Version: 1.7.0
+* Version: 1.7.1
 * Tested up to: 5.5.1
 * Requires at least: 4.7
 * Author: Andrew Fitzgerald
@@ -36,9 +36,9 @@ function active_hook() {
 function init_api1( $data ) {
 	//GET variables
 	$prm = $data->get_params();
-	$b_cat = $prm['category'];
-	$numc = $prm['limit'];
-	$cr = $prm['cache'];
+	$b_cat = $prm['category'] ?? '';
+	$numc = $prm['limit'] ?? 5;
+	$cr = $prm['cache'] ?? 1;
 	if ( $cr != '0') $cacher = (empty($cr) ? 1 : $cr);
 	else if ($cr == '0') $cacher = 0;
 	$tr = 'afb_cached_' . (empty($b_cat) ? 'all' : $b_cat) . '_' . (empty($numc) ? 1 : $numc);
@@ -76,7 +76,7 @@ function init_api1( $data ) {
 				'uid' => 'urn:uuid:' . wp_generate_uuid4( get_permalink( $post ) ),
 				'updateDate' => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z', true, $post ),
 				'titleText' => $post->post_title,
-				'mainText' => wp_strip_all_tags( $post->post_excerpt ),
+				'mainText' => wp_strip_all_tags( empty($post->post_excerpt) ? $post->post_title : $post->post_excerpt ),
 				'redirectionUrl' => get_permalink( $post ),
 			);
 
